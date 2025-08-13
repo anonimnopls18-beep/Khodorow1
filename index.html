@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>ТОП ганьби Ходорова — Old VK Style (Offline Data)</title>
+  <meta name="description" content="Рейтинг у стилі старого ВК. Пошук, сортування, компактний режим, анімації. Дані всередині файлу. Готово для GitHub Pages." />
+
+  <!-- Telegram WebApp SDK (не заважає звичайному браузеру) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root{
+      --vk-blue: #4a76a8;        /* фірмовий синій */
+      --vk-blue-dark: #2a5885;   /* темніший синій (кнопки/ховер) */
+      --bg: #edeef0;             /* фон */
+      --panel: #ffffff;          /* панелі/картки */
+      --text: #2c2d2e;           /* основний текст */
+      --muted: #6b7785;          /* приглушений текст */
+      --line: #dce1e6;           /* бордери */
+      --danger: #e64646;         /* індикатор ганьби */
+      --ok: #4bb34b;             /* зелений */
+      --shadow: 0 2px 8px rgba(0,0,0,.06);
+      --radius: 10px;
+      --radius-sm: 8px;
+      --radius-xl: 16px;
+      --trans-fast: 120ms ease;
+      --trans-med: 220ms ease;
+    }
+
+    /* Підтримка тем від Telegram (якщо відкрито як WebApp) */
+    html.tg-theme{
+      --vk-blue: var(--tg-theme-button-color, #4a76a8);
+      --vk-blue-dark: color-mix(in srgb, var(--vk-blue) 80%, #1e2f46);
+      --bg: var(--tg-theme-secondary-bg-color, #edeef0);
+      --panel: var(--tg-theme-bg-color, #ffffff);
+      --text: var(--tg-theme-text-color, #2c2d2e);
+      --muted: var(--tg-theme-hint-color, #6b7785);
+      --line: rgba(0,0,0,.08);
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:14px/1.35 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,Helvetica,sans-serif}
+    a{color:var(--vk-blue);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* ======= Topbar ======= */
+    .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px;background:var(--vk-blue);color:#fff;border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+    .vk-logo{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;background:#fff;color:var(--vk-blue);font-weight:800;box-shadow:var(--shadow)}
+    .top-title{font-weight:800;font-size:16px;letter-spacing:.2px}
+    .top-controls{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .input{height:36px;min-width:180px;border:1px solid rgba(255,255,255,.36);background:rgba(255,255,255,.18);color:#fff;padding:0 10px;border-radius:8px;outline:none;backdrop-filter:saturate(140%) blur(6px);transition:border var(--trans-fast)}
+    .input::placeholder{color:#e7eef7}
+    .input:focus{border-color:#fff}
+    .select,.switch{height:36px;border:1px solid rgba(255,255,255,.36);background:rgba(255,255,255,.18);color:#fff;padding:0 10px;border-radius:8px}
+    .btn-top{height:36px;border:1px solid rgba(255,255,255,.36);background:rgba(255,255,255,.18);color:#fff;padding:0 12px;border-radius:8px;cursor:pointer}
+
+    /* ======= Layout ======= */
+    .page{max-width:1160px;margin:12px auto;display:grid;grid-template-columns:240px 1fr;gap:12px;padding:0 12px}
+    @media (max-width:980px){.page{grid-template-columns:1fr}}
+
+    /* ======= Sidebar ======= */
+    .left-menu{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px;box-shadow:var(--shadow)}
+    .left-menu .section-title{font-weight:700;color:#55677d;margin:6px 8px 4px}
+    .left-menu a{display:block;padding:8px 10px;border-radius:8px;color:#244e7a;transition:background var(--trans-fast),transform var(--trans-fast)}
+    .left-menu a:hover{background:#f0f2f5;text-decoration:none;transform:translateX(2px)}
+
+    /* ======= Panels ======= */
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .panel-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);background:#f9fafb;border-radius:var(--radius) var(--radius) 0 0}
+    .panel-title{font-weight:800}
+    .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .controls .control{display:flex;align-items:center;gap:6px}
+    .controls select,.controls input[type="text"]{height:34px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;color:var(--text)}
+    .controls label{color:#55677d}
+    .panel-body{padding:12px}
+
+    /* ======= Stat chips ======= */
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}
+
+    /* ======= Grid/List ======= */
+    .grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:10px}
+    @media (max-width:1200px){.grid{grid-template-columns:repeat(3, 1fr)}}
+    @media (max-width:900px){.grid{grid-template-columns:repeat(2, 1fr)}}
+    @media (max-width:560px){.grid{grid-template-columns:1fr}}
+
+    .person-card{display:flex;gap:10px;padding:10px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;min-height:96px;position:relative;box-shadow:var(--shadow);opacity:0;transform:translateY(14px) scale(.98);animation:cardIn .42s var(--trans-med) forwards}
+    @keyframes cardIn{to{opacity:1;transform:none}}
+    .person-card:hover{background:#fbfcff;border-color:#c8d6e5}
+    .person-card.compact{min-height:74px}
+
+    .rank-badge{position:absolute;top:6px;left:6px;font-size:11px;color:#fff;background:var(--vk-blue-dark);padding:2px 8px;border-radius:999px;box-shadow:var(--shadow)}
+    .avatar{width:84px;height:84px;border-radius:10px;border:1px solid var(--line);object-fit:cover;background:#f1f2f4;transition:transform var(--trans-med)}
+    .person-card:hover .avatar{transform:translateZ(0) scale(1.02)}
+    .compact .avatar{width:60px;height:60px;border-radius:8px}
+
+    .info{flex:1;min-width:0}
+    .name{font-weight:800;display:inline-block;margin-top:2px;max-width:100%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+    .muted{color:var(--muted)}
+    .meta{margin-top:2px;font-size:12px;color:var(--muted)}
+
+    .shame-badge{display:inline-block;margin-top:6px;font-size:12px;background:#f0f3f6;border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+    .bar{margin-top:8px;height:8px;background:#eef1f5;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+    .bar > div{height:100%;background:linear-gradient(90deg, var(--danger), var(--vk-blue));width:0;transition:width .35s ease}
+
+    .card-actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid #bfcad7;background:#e5ebf1;color:#244e7a;border-radius:8px;font-size:13px;cursor:pointer;touch-action:manipulation;transition:transform var(--trans-fast),box-shadow var(--trans-fast)}
+    .btn:hover{background:#dce6f0;transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+
+    .footnote{max-width:1160px;margin:16px auto;color:#6b7785;font-size:12px;padding:0 16px}
+
+    /* ======= Modal & Toast ======= */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.42);z-index:50}
+    .modal.open{display:flex}
+    .modal-card{width:min(660px, 94vw);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.28)}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);background:#f9fafb;border-radius:12px 12px 0 0}
+    .modal-body{padding:14px}
+    .close{cursor:pointer;color:#8aa1bd}
+    .close:hover{color:#2a5885}
+    .modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#1d2837;color:#fff;padding:10px 14px;border-radius:999px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .28s ease, transform .28s ease;z-index:60}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    /* ======= Skeletons ======= */
+    .skeleton{position:relative;overflow:hidden;background:#eef1f5;border:1px solid var(--line);border-radius:var(--radius);height:96px}
+    .skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);animation:shimmer 1.2s infinite}
+    @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+    /* Безпечна зона для жестів на iOS */
+    .safe{padding-bottom:constant(safe-area-inset-bottom);padding-bottom:env(safe-area-inset-bottom)}
+  </style>
+</head>
+<body>
+  <!-- ======= TOPBAR ======= -->
+  <header class="topbar safe">
+    <div class="vk-logo">vk</div>
+    <div class="top-title">ТОП ганьби Ходорова</div>
+    <div class="top-controls">
+      <input id="q" class="input" type="text" placeholder="Пошук по імені…" aria-label="Пошук" />
+      <select id="sort" class="select" aria-label="Сортування">
+        <option value="shame-desc">Ганьба ↓</option>
+        <option value="shame-asc">Ганьба ↑</option>
+        <option value="name-asc">Ім'я А→Я</option>
+      </select>
+      <button id="toggleCompact" class="btn-top" title="Компактний режим (g)">Compact</button>
+      <button id="cycleSort" class="btn-top" title="Змінити сортування (s)">Sort</button>
+    </div>
+  </header>
+
+  <!-- ======= LAYOUT ======= -->
+  <main class="page">
+    <!-- Sidebar -->
+    <aside class="left-menu" id="leftMenu">
+      <div class="section-title">Меню</div>
+      <a href="#">Моя сторінка</a>
+      <a href="#">Новини</a>
+      <a href="#">Повідомлення</a>
+      <a href="#">Друзі</a>
+      <a href="#">Спільноти</a>
+      <a href="#">Світлини</a>
+      <a href="#">Налаштування</a>
+      <div class="section-title" style="margin-top:10px">Додатково</div>
+      <a href="#rules" id="openRules">Правила</a>
+      <a href="#feedback" id="openAbout">Про сайт</a>
+    </aside>
+
+    <!-- Content -->
+    <section class="panel" aria-labelledby="ratingTitle">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title" id="ratingTitle">Рейтинг «ганьби»</div>
+          <div class="chips" id="chips">
+            <div class="chip">Елементів: <b id="statCount">0</b></div>
+            <div class="chip">Середнє: <b id="statAvg">0</b></div>
+            <div class="chip">Максимум: <b id="statMax">0</b></div>
+            <div class="chip">Оновлено: <b id="updatedAt">—</b></div>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="control muted">Вигляд: <span id="viewName">Звичайний</span></div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="grid" id="grid">
+          <!-- Скелетони: зникнуть одразу після 1-го рендера -->
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+        <div id="errorBox" style="display:none;margin-top:10px;padding:10px;border:1px solid #f3c1c1;background:#fff3f3;color:#a33434;border-radius:8px"></div>
+        <div style="display:flex;justify-content:center;margin-top:12px">
+          <button id="btnMore" class="btn" style="display:none">Показати ще</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="footnote">
+    <strong>Нагадування:</strong> поважайте одне одного. Не використовуйте рейтинг для цькування чи наклепів. Дотримуйтесь законів. Фото та імена — лише з публічних джерел або з дозволу осіб.
+  </div>
+
+  <!-- ======= MODAL & TOAST ======= -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div id="modalTitle">Детальніше</div>
+        <div class="close" id="modalClose" role="button" tabindex="0" aria-label="Закрити">✕</div>
+      </div>
+      <div class="modal-body" id="modalBody">—</div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Повідомлення</div>
+
+  <script>
+    (function(){
+      /* =========================
+         1) ДАНІ — 20 анкет (редагуй тут)
+         Поля:
+           - name        (текст)
+           - photo       (URL зображення)
+           - shame       (число)
+           - description (короткий індивідуальний опис)
+       ========================= */
+      const profiles = [
+        { name: "Володя Гісь", photo: "https://files.catbox.moe/mckqjf.jpg", shame: 24, description: "прост." },
+        { name: "Роза", photo: "https://files.catbox.moe/ak0mp7.jpg", shame: 5, description: "..." },
+        { name: "Богдасик", photo: "https://files.catbox.moe/vkqn5b.jpg", shame: 300, description: "чат джпт сказав." },
+        { name: "Микола Чєх", photo: "https://files.catbox.moe/8l8xwy.jpg", shame: 0, description: "золота дитина." },
+        { name: "Казік", photo: "https://files.catbox.moe/njsejo.jpg", shame: 0, description: "підприємець, розумашка ." },
+        { name: "Павук", photo: "https://files.catbox.moe/jcgs07.jpg", shame: 1, description: "інтернет герой." },
+        { name: "Юра Кіт", photo: "https://files.catbox.moe/qo3o9e.jpg", shame: 5, description: "без коментарів." },
+        { name: "Фокстрот", photo: "https://files.catbox.moe/5vxffi.jpg", shame: 2, description: "гордість." },
+        { name: "Петров", photo: "https://files.catbox.moe/nxe1rj.jpg", shame: 1, description: "...." },
+        { name: "Ганич", photo: "https://files.catbox.moe/j0r1mf.jpg", shame: 0, description: "просто сонечко." },
+        { name: "Акуліч", photo: "https://files.catbox.moe/d9s39d.jpg", shame: 0, description: "на позитиві." },
+        { name: "Ваня", photo: "https://files.catbox.moe/n9595h.jpg", shame: 0, description: "хто його сюди запросив." },
+        { name: "Руля", photo: "https://files.catbox.moe/bbvgtv.jpg", shame: 2, description: "він точно з Ходорова." },
+        { name: "Саша", photo: "https://files.catbox.moe/4yh508.jpg", shame: 25, description: "оуршцршмуцму." },
+        { name: "Ігор", photo: "https://files.catbox.moe/ul5j5o.jpg", shame: 1, description: "ощуцмумцшщмуц." },
+        { name: "Микола котлєта", photo: "https://files.catbox.moe/ahwo52.jpg", shame: 3, description: "Румумумцмц." },
+        { name: "Блогери з села", photo: "https://files.catbox.moe/4uavxe.jpg", shame: 1, description: "Гмуцмуцумцмуців." },
+        { name: "Сергій", photo: "https://files.catbox.moe/a379jl.jpg", shame: 0, description: "Пуцмуцмуцмуцмуами." },
+        { name: "Найкращий барбершоп в Ходорові", photo: "https://files.catbox.moe/tdfapt.jpg", shame: 0, description: "Зуцмцумумуцмууй." },
+        { name: "Царук", photo: "https://files.catbox.moe/uydstm.jpg", shame: 0, description: "Зуцмцумумуцмууй." },
+        { name: "???", photo: "https://files.catbox.moe/602jup.jpg", shame: 666, description: "Кцумуцуммууцммунь." }
+      ];
+
+      /* =========================
+         2) Telegram WebApp: тема
+         (авто-підхоплення кольорів)
+      ========================= */
+      const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+      if (tg) { document.documentElement.classList.add('tg-theme'); try{ tg.expand(); }catch(e){} }
+
+      /* =========================
+         3) Елементи
+      ========================= */
+      const grid = document.getElementById('grid');
+      const sortSel = document.getElementById('sort');
+      const q = document.getElementById('q');
+      const btnMore = document.getElementById('btnMore');
+      const updatedAt = document.getElementById('updatedAt');
+      const statCount = document.getElementById('statCount');
+      const statAvg = document.getElementById('statAvg');
+      const statMax = document.getElementById('statMax');
+      const toggleCompactBtn = document.getElementById('toggleCompact');
+      const viewName = document.getElementById('viewName');
+      const cycleSortBtn = document.getElementById('cycleSort');
+      const errorBox = document.getElementById('errorBox');
+
+      const modal = document.getElementById('modal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      const modalClose = document.getElementById('modalClose');
+
+      const openRules = document.getElementById('openRules');
+      const openAbout = document.getElementById('openAbout');
+      const toastEl = document.getElementById('toast');
+
+      /* =========================
+         4) Стан
+      ========================= */
+      let ALL_DATA = profiles.slice(); // працюємо з копією
+      let RENDERED_COUNT = 0;
+      const PAGE_SIZE = 24;
+      let COMPACT = false;
+      let LAST_SORT = sortSel.value;
+      let LAST_QUERY = '';
+
+      /* =========================
+         5) Утиліти
+      ========================= */
+      function nowStr(){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+      function showToast(text, ms=2200){ toastEl.textContent=text; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'), ms); }
+      function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+      function escapeAttr(s){ return String(s).replace(/["']/g, c=>({'"':'&quot;',"'":'&#39;'}[c])); }
+      function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); }; }
+      function placeholderSvg(){
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='84' height='84'><rect width='100%' height='100%' fill='%23dce1e6'/><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='12' fill='%236b7785'>Фото</text></svg>`;
+        return encodeURIComponent(svg);
+      }
+
+      /* =========================
+         6) Рендер картки
+      ========================= */
+      function createCard(item, i){
+        const { name, photo, shame } = item;
+        const v = Number(shame) || 0;
+        const card = document.createElement('article');
+        card.className = 'person-card';
+        card.dataset.shame = v;
+        card.dataset.name = (name||'').toLowerCase();
+        card.style.animationDelay = `${(i%24)*0.02}s`;
+        card.innerHTML = `
+          <span class="rank-badge">#?</span>
+          <img class="avatar" loading="lazy" alt="${escapeHtml(name||'Без імені')}" src="${escapeAttr(photo||'')}" onerror="this.src='data:image/svg+xml;utf8,${placeholderSvg()}';this.onerror=null;" />
+          <div class="info">
+            <a class="name" href="#" title="${escapeHtml(name||'Без імені')}">${escapeHtml(name||'Без імені')}</a>
+            <div class="meta">ID: ${i+1}</div>
+            <div class="shame-badge">Ганьба: <b>${v}</b></div>
+            <div class="bar" role="progressbar" aria-valuemin="0"><div></div></div>
+            <div class="card-actions">
+              <button class="btn" data-open-modal>Детальніше</button>
+              <button class="btn" data-copy-name>Копіювати ім'я</button>
+            </div>
+          </div>`;
+        return card;
+      }
+
+      function getCards(){ return Array.from(grid.querySelectorAll('.person-card')); }
+
+      function updateBars(){
+        const visible = getCards().filter(c=>c.style.display!=='none');
+        const vals = visible.map(c => Number(c.dataset.shame||0));
+        const max = Math.max(1, ...vals);
+        getCards().forEach(c => {
+          const v = Number(c.dataset.shame||0);
+          const bar = c.querySelector('.bar > div');
+          const w = Math.round((v / max) * 100);
+          bar.style.width = w + '%';
+          bar.parentElement.setAttribute('aria-valuenow', String(v));
+          bar.parentElement.setAttribute('aria-valuemax', String(max));
+        });
+      }
+      function updateRanks(){
+        const cards = getCards().filter(c=>c.style.display!=='none');
+        cards.forEach((c, i) => {
+          const badge = c.querySelector('.rank-badge');
+          if (badge) badge.textContent = '#' + (i+1);
+        });
+      }
+      function toggleCompact(on){
+        COMPACT = !!on;
+        getCards().forEach(c => c.classList.toggle('compact', COMPACT));
+        viewName.textContent = COMPACT ? 'Компактний' : 'Звичайний';
+      }
+
+      /* =========================
+         7) Рендер списку
+      ========================= */
+      function renderChunk(list){
+        const start = RENDERED_COUNT;
+        const end = Math.min(start + PAGE_SIZE, list.length);
+        for (let i=start;i<end;i++) grid.appendChild(createCard(list[i], i));
+        RENDERED_COUNT = end;
+        btnMore.style.display = end < list.length ? '' : 'none';
+        toggleCompact(COMPACT);
+        updateBars();
+        updateRanks();
+      }
+      function clearGrid(){ grid.innerHTML = ''; RENDERED_COUNT = 0; }
+
+      function applyStats(list){
+        const arr = list.map(x=>Number(x.shame)||0);
+        const sum = arr.reduce((a,b)=>a+b,0);
+        const avg = arr.length? (sum/arr.length) : 0;
+        const max = arr.length? Math.max(...arr) : 0;
+        statCount.textContent = list.length;
+        statAvg.textContent = Math.round(avg*10)/10;
+        statMax.textContent = max;
+        updatedAt.textContent = nowStr();
+      }
+
+      function filterAndSort(data){
+        const qn = (LAST_QUERY||'').toLowerCase();
+        let list = qn ? data.filter(x => String(x.name||'').toLowerCase().includes(qn)) : data.slice();
+        if (LAST_SORT === 'shame-desc') list.sort((a,b)=> (Number(b.shame)||0)-(Number(a.shame)||0));
+        else if (LAST_SORT === 'shame-asc') list.sort((a,b)=> (Number(a.shame)||0)-(Number(b.shame)||0));
+        else if (LAST_SORT === 'name-asc') list.sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''),'uk'));
+        return list;
+      }
+
+      function reflow(){
+        const list = filterAndSort(ALL_DATA);
+        applyStats(list);
+        clearGrid();
+        // прибрати скелетони при першому рендері
+        renderChunk(list);
+      }
+
+      /* =========================
+         8) Події
+      ========================= */
+      sortSel.addEventListener('change', (e)=>{ LAST_SORT = e.target.value; reflow(); });
+      const onQuery = debounce(()=>{ LAST_QUERY = q.value; reflow(); }, 180);
+      q.addEventListener('input', onQuery);
+      btnMore.addEventListener('click', ()=>{ const list = filterAndSort(ALL_DATA); renderChunk(list); });
+
+      toggleCompactBtn.addEventListener('click', ()=>{ toggleCompact(!COMPACT); });
+      cycleSortBtn.addEventListener('click', ()=>{
+        const modes = ['shame-desc','shame-asc','name-asc'];
+        const i = modes.indexOf(LAST_SORT);
+        LAST_SORT = modes[(i+1)%modes.length];
+        sortSel.value = LAST_SORT;
+        reflow();
+        showToast('Сортування: ' + sortSel.options[sortSel.selectedIndex].textContent);
+      });
+
+      // Клавіатура: '/' — фокус пошуку, 'g' — компакт, 's' — сортування
+      window.addEventListener('keydown', (e)=>{
+        const tag = document.activeElement && document.activeElement.tagName;
+        if (e.key === '/' && !/input|textarea/i.test(tag || '')) { e.preventDefault(); q.focus(); }
+        if (e.key.toLowerCase() === 'g') { toggleCompact(!COMPACT); }
+        if (e.key.toLowerCase() === 's') { cycleSortBtn.click(); }
+      });
+
+      // Модалки «Правила» та «Про сайт»
+      openRules.addEventListener('click', (e)=>{ e.preventDefault(); openModal('Правила', rulesHtml()); });
+      openAbout.addEventListener('click', (e)=>{ e.preventDefault(); openModal('Про сайт', aboutHtml()); });
+
+      function openModal(title, html){
+        modalTitle.textContent = title;
+        modalBody.innerHTML = html;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden','false');
+      }
+      function closeModal(){
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden','true');
+      }
+      modalClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+      modalClose.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); closeModal(); } });
+
+      // Делегування дій у картках
+      grid.addEventListener('click', (e)=>{
+        const btnCopy = e.target.closest('[data-copy-name]');
+        const btnModal = e.target.closest('[data-open-modal]');
+        if (btnCopy){
+          const card = e.target.closest('.person-card');
+          const name = card.querySelector('.name').textContent;
+          navigator.clipboard.writeText(name).then(()=> showToast('Імʼя скопійовано'));
+          return;
+        }
+        if (btnModal){
+          const card = e.target.closest('.person-card');
+          const name = card.querySelector('.name').textContent;
+          const shame = card.dataset.shame;
+          const idx = Number(card.querySelector('.meta').textContent.replace('ID:','').trim()) - 1;
+          const item = ALL_DATA[idx] || {};
+          const img = card.querySelector('img.avatar').cloneNode();
+          img.style.width='120px'; img.style.height='120px'; img.style.borderRadius='10px'; img.style.border='1px solid var(--line)';
+          const html = `<div style="display:flex;gap:12px;align-items:flex-start">
+            <div>${img.outerHTML}</div>
+            <div style="min-width:0">
+              <div class="muted">Картка</div>
+              <div style="font-weight:800;font-size:18px;margin:2px 0 6px">${escapeHtml(name)}</div>
+              <div class="shame-badge">Ганьба: <b>${escapeHtml(shame)}</b></div>
+              <p style="margin-top:10px">${escapeHtml(item.description || '—')}</p>
+              <div class="modal-actions">
+                <button class="btn" data-copy-modal-name>Копіювати імʼя</button>
+                <button class="btn" onclick="window.print()">Друк</button>
+              </div>
+            </div>
+          </div>`;
+          openModal('Детальніше', html);
+        }
+      });
+
+      // Кнопка "Копіювати ім'я" з модалки (делегування на саму модалку)
+      modalBody.addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-copy-modal-name]');
+        if(!btn) return;
+        const t = modalBody.querySelector('div>div>div:nth-child(2)')?.textContent || '';
+        if(!t) return;
+        navigator.clipboard.writeText(t).then(()=> showToast('Імʼя скопійовано'));
+      });
+
+      /* =========================
+         9) Старт
+      ========================= */
+      updatedAt.textContent = nowStr();
+      if (window.matchMedia('(pointer:fine)').matches) setTimeout(()=>{ try{ q.focus(); }catch(e){} }, 450);
+      reflow();
+
+      /* =========================
+         10) HTML допоміжні
+      ========================= */
+      function rulesHtml(){
+        return `
+          <ul>
+            <li>Без мови ненависті та образ.</li>
+            <li>все що тут є зроблене в жарт.</li>
+            <li>в платформи немає власника.</li>
+            <li>Помітили порушення — напишіть адміністрації.</li>
+          </ul>
+        `;
+      }
+      function aboutHtml(){
+        return `
+          <p><b>ТОП ганьби Ходорова</b> — фанатський рейтинг у стилі старого ВК. дані взяті в добровольців.</p>
+          <p>в сайта немає власника.</p>
+          <p class="muted">Порада: мийте руки до прийома їжі та після.</p>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>
