@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="format-detection" content="telephone=no" />
   <title>ТОП ганьби Ходорова — Old VK Style (Offline Data)</title>
-  <meta name="description" content="Рейтинг у стилі старого ВК. Пошук, сортування, компактний режим, анімації. Дані всередині файлу. Готово для GitHub Pages." />
+  <meta name="description" content="хочете когось додати пишіть в @Khodorow_bot" />
 
   <!-- Telegram WebApp SDK (не заважає звичайному браузеру) -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -231,14 +231,14 @@
            - description (короткий індивідуальний опис)
        ========================= */
       const profiles = [
-        { name: "Володя Гісь", photo: "https://files.catbox.moe/mckqjf.jpg", shame: 24, description: "прост." },
+        { name: "Володя Гісь", photo: "https://files.catbox.moe/mckqjf.jpg", shame: 74, description: "прост." },
         { name: "Роза", photo: "https://files.catbox.moe/ak0mp7.jpg", shame: 5, description: "..." },
-        { name: "Богдасик", photo: "https://files.catbox.moe/vkqn5b.jpg", shame: 100, description: "чат джпт сказав." },
+        { name: "Богдасик", photo: "https://files.catbox.moe/qb6rw4.jpg", shame: 0, description: "чат джпт сказав." },
         { name: "Казік", photo: "https://files.catbox.moe/njsejo.jpg", shame: 0, description: "підприємець, розумашка ." },
         { name: "Павук", photo: "https://files.catbox.moe/jcgs07.jpg", shame: 1, description: "інтернет герой." },
         { name: "Юра Кіт", photo: "https://files.catbox.moe/qo3o9e.jpg", shame: 5, description: "без коментарів." },
         { name: "Фокстрот", photo: "https://files.catbox.moe/5vxffi.jpg", shame: 2, description: "гордість." },
-        { name: "Петров", photo: "https://files.catbox.moe/nxe1rj.jpg", shame: 100, description: "...." },
+        { name: "Петров", photo: "https://files.catbox.moe/xqjgm9.jpg", shame: 30, description: "...." },
         { name: "Ганич", photo: "https://files.catbox.moe/j0r1mf.jpg", shame: 0, description: "просто сонечко." },
         { name: "Акуліч", photo: "https://files.catbox.moe/d9s39d.jpg", shame: 0, description: "на позитиві." },
         { name: "Ваня", photo: "https://files.catbox.moe/n9595h.jpg", shame: 0, description: "хто його сюди запросив." },
@@ -247,9 +247,23 @@
         { name: "Ігор", photo: "https://files.catbox.moe/ul5j5o.jpg", shame: 1, description: "ощуцмумцшщмуц." },
         { name: "Микола котлєта", photo: "https://files.catbox.moe/ahwo52.jpg", shame: 3, description: "Румумумцмц." },
         { name: "Блогери з села", photo: "https://files.catbox.moe/4uavxe.jpg", shame: 1, description: "Гмуцмуцумцмуців." },
-        { name: "Сергій", photo: "https://files.catbox.moe/a379jl.jpg", shame: 0, description: "Пуцмуцмуцмуцмуами." },
+        { name: "Сергій", photo: "https://files.catbox.moe/a379jl.jpg", shame: 30, description: "Пуцмуцмуцмуцмуами." },
         { name: "Найкращий барбершоп в Ходорові", photo: "https://files.catbox.moe/tdfapt.jpg", shame: 0, description: "Зуцмцумумуцмууй." },
-        { name: "Царук", photo: "https://files.catbox.moe/uydstm.jpg", shame: 0, description: "Зуцмцумумуцмууй." }
+        { name: "Царук", photo: "https://files.catbox.moe/uydstm.jpg", shame: 0, description: "Зуцмцумумуцмууй." },
+        { name: "Стас", photo: "https://files.catbox.moe/6y55tw.jpg", shame: 1, description: "інтернет герой." },
+        { name: "Білоус", photo: "https://files.catbox.moe/zxoint.jpg", shame: 9, description: "без коментарів." },
+        { name: "Ростик", photo: "https://files.catbox.moe/jffixe.jpg", shame: 40, description: "кампот." },
+        { name: "Діана", photo: "https://files.catbox.moe/zci3si.jpg", shame: 1, description: "...." },
+        { name: "Настя", photo: "https://files.catbox.moe/6so3jh.jpg", shame: 100, description: "просто сонечко." },
+        { name: "Аята", photo: "https://files.catbox.moe/6fjac6.jpg", shame: 17, description: "на позитиві." },
+        { name: "Максим Гук", photo: "https://files.catbox.moe/an38uw.jpg", shame: 70, description: "хто його сюди запросив." },
+        { name: "Мальчик", photo: "https://files.catbox.moe/f4aedp.jpg", shame: 2, description: "він точно з Ходорова." },
+        { name: "Назік", photo: "https://files.catbox.moe/iyguh3.jpg", shame: 7, description: "мб." },
+        { name: "Саламін", photo: "https://files.catbox.moe/pex6yh.jpg", shame: 2, description: "ощуцмумцшщмуц." },
+        { name: "Єва ганичка", photo: "https://files.catbox.moe/67utem.jpg", shame: 10, description: "Румумумцмц." },
+        { name: "Павло Ворона", photo: "https://files.catbox.moe/w2wfjk.jpg", shame: 45, description: "хз." },
+        { name: "Анна-Марія", photo: "https://files.catbox.moe/yhakco.jpg", shame: 3, description: "Пуцмуцмуцмуцмуами." },
+        { name: "Живчик", photo: "https://files.catbox.moe/ldw7p1.jpg", shame: 1, description: "що писати." }
       ];
 
       /* =========================
@@ -506,7 +520,7 @@
       function rulesHtml(){
         return `
           <ul>
-            <li>Без мови ненависті та образ.</li>
+            <li>хочете когось додати пишіть в @Khodorow_bot.</li>
             <li>все що тут є зроблене в жарт.</li>
             <li>в платформи немає власника.</li>
             <li>Помітили порушення — напишіть адміністрації.</li>
@@ -524,7 +538,3 @@
   </script>
 </body>
 </html>
-
-
-
-
