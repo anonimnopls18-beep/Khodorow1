@@ -231,39 +231,47 @@
            - description (короткий індивідуальний опис)
        ========================= */
       const profiles = [
-        { name: "Володя Гісь", photo: "https://files.catbox.moe/mckqjf.jpg", shame: 74, description: "прост." },
-        { name: "Роза", photo: "https://files.catbox.moe/ak0mp7.jpg", shame: 5, description: "..." },
-        { name: "Богдасик", photo: "https://files.catbox.moe/qb6rw4.jpg", shame: 0, description: "чат джпт сказав." },
+        { name: "Володя Гісь", photo: "https://files.catbox.moe/mckqjf.jpg", shame: 74, description: "топ 1" },
+        { name: "Роза", photo: "https://files.catbox.moe/ak0mp7.jpg", shame: 50, description: "топ 2" },
+        { name: "Богдасик", photo: "https://files.catbox.moe/qb6rw4.jpg", shame: 0, description: "топ 3" },
         { name: "Казік", photo: "https://files.catbox.moe/njsejo.jpg", shame: 0, description: "підприємець, розумашка ." },
-        { name: "Павук", photo: "https://files.catbox.moe/jcgs07.jpg", shame: 1, description: "інтернет герой." },
-        { name: "Юра Кіт", photo: "https://files.catbox.moe/qo3o9e.jpg", shame: 5, description: "без коментарів." },
-        { name: "Фокстрот", photo: "https://files.catbox.moe/5vxffi.jpg", shame: 2, description: "гордість." },
+        { name: "Паук", photo: "https://files.catbox.moe/2u0y10.jpg", shame: 130, description: "інтернет герой." },
+        { name: "Юра Кіт", photo: "https://files.catbox.moe/qo3o9e.jpg", shame: 66, description: "без коментарів." },
+        { name: "Фокстрот", photo: "https://files.catbox.moe/5vxffi.jpg", shame: 42, description: "гордість." },
         { name: "Петров", photo: "https://files.catbox.moe/xqjgm9.jpg", shame: 30, description: "...." },
         { name: "Ганич", photo: "https://files.catbox.moe/j0r1mf.jpg", shame: 0, description: "просто сонечко." },
         { name: "Акуліч", photo: "https://files.catbox.moe/d9s39d.jpg", shame: 0, description: "на позитиві." },
         { name: "Ваня", photo: "https://files.catbox.moe/n9595h.jpg", shame: 0, description: "хто його сюди запросив." },
-        { name: "Руля", photo: "https://files.catbox.moe/bbvgtv.jpg", shame: 2, description: "він точно з Ходорова." },
-        { name: "Саша", photo: "https://files.catbox.moe/4yh508.jpg", shame: 25, description: "оуршцршмуцму." },
-        { name: "Ігор", photo: "https://files.catbox.moe/ul5j5o.jpg", shame: 1, description: "ощуцмумцшщмуц." },
-        { name: "Микола котлєта", photo: "https://files.catbox.moe/ahwo52.jpg", shame: 3, description: "Румумумцмц." },
-        { name: "Блогери з села", photo: "https://files.catbox.moe/4uavxe.jpg", shame: 1, description: "Гмуцмуцумцмуців." },
+        { name: "Руля", photo: "https://files.catbox.moe/bbvgtv.jpg", shame: 23, description: "він точно з Ходорова." },
+        { name: "Саша", photo: "https://files.catbox.moe/4yh508.jpg", shame: 25, description: "анонімно пш." },
+        { name: "Ігор", photo: "https://files.catbox.moe/ul5j5o.jpg", shame: 24, description: "ощуцмумцшщмуц." },
+        { name: "Микола котлєта", photo: "https://files.catbox.moe/ahwo52.jpg", shame: 13, description: "Румумумцмц." },
+        { name: "Блогери з села", photo: "https://files.catbox.moe/4uavxe.jpg", shame: 9, description: "Гмуцмуцумцмуців." },
         { name: "Сергій", photo: "https://files.catbox.moe/a379jl.jpg", shame: 30, description: "Пуцмуцмуцмуцмуами." },
-        { name: "Найкращий барбершоп в Ходорові", photo: "https://files.catbox.moe/tdfapt.jpg", shame: 0, description: "Зуцмцумумуцмууй." },
+        { name: "Найкращий барбершоп в Ходорові", photo: "https://files.catbox.moe/tdfapt.jpg", shame: 0, description: "поплач." },
         { name: "Царук", photo: "https://files.catbox.moe/uydstm.jpg", shame: 0, description: "Зуцмцумумуцмууй." },
-        { name: "Стас", photo: "https://files.catbox.moe/6y55tw.jpg", shame: 1, description: "інтернет герой." },
+        { name: "Стас", photo: "https://files.catbox.moe/6y55tw.jpg", shame: 13, description: "інтернет герой." },
         { name: "Білоус", photo: "https://files.catbox.moe/zxoint.jpg", shame: 9, description: "без коментарів." },
         { name: "Ростик", photo: "https://files.catbox.moe/jffixe.jpg", shame: 40, description: "кампот." },
-        { name: "Діана", photo: "https://files.catbox.moe/zci3si.jpg", shame: 1, description: "...." },
+        { name: "Діана", photo: "https://files.catbox.moe/zci3si.jpg", shame: 5, description: "...." },
         { name: "Настя", photo: "https://files.catbox.moe/6so3jh.jpg", shame: 100, description: "просто сонечко." },
         { name: "Аята", photo: "https://files.catbox.moe/6fjac6.jpg", shame: 17, description: "на позитиві." },
         { name: "Максим Гук", photo: "https://files.catbox.moe/an38uw.jpg", shame: 70, description: "хто його сюди запросив." },
-        { name: "Мальчик", photo: "https://files.catbox.moe/f4aedp.jpg", shame: 2, description: "він точно з Ходорова." },
+        { name: "Мальчик", photo: "https://files.catbox.moe/f4aedp.jpg", shame: 4, description: "він точно з Ходорова." },
         { name: "Назік", photo: "https://files.catbox.moe/iyguh3.jpg", shame: 7, description: "мб." },
-        { name: "Саламін", photo: "https://files.catbox.moe/pex6yh.jpg", shame: 2, description: "ощуцмумцшщмуц." },
+        { name: "Саламін", photo: "https://files.catbox.moe/pex6yh.jpg", shame: 3, description: "що писати." },
         { name: "Єва ганичка", photo: "https://files.catbox.moe/67utem.jpg", shame: 10, description: "Румумумцмц." },
         { name: "Павло Ворона", photo: "https://files.catbox.moe/ldw7p1.jpg", shame: 45, description: "хз." },
         { name: "Анна-Марія", photo: "https://files.catbox.moe/yhakco.jpg", shame: 3, description: "Пуцмуцмуцмуцмуами." },
-        { name: "Живчик", photo: "https://files.catbox.moe/w2wfjk.jpg", shame: 1, description: "що писати." }
+        { name: "Живчик", photo: "https://files.catbox.moe/w2wfjk.jpg", shame: 6, description: "що писати." },
+        { name: "Чорненький", photo: "https://files.catbox.moe/60qjqs.jpg", shame: 3, description: "де модерація." },
+        { name: "Аня Марусяк", photo: "https://files.catbox.moe/eji53n.jpg", shame: 20, description: "Румумумцмц." },
+        { name: "Партика", photo: "https://files.catbox.moe/omuuph.jpg", shame: 60, description: "хз." },
+        { name: "Володя", photo: "https://files.catbox.moe/fssgey.jpg", shame: 45, description: "лол." },
+        { name: "Олеся", photo: "https://files.catbox.moe/fssgey.jpg", shame: 200, description: "може бути." },
+        { name: "Кірюша", photo: "https://files.catbox.moe/3xr95v.jpg", shame: 30, description: "це точно анонімно." },
+        { name: "Христя", photo: "https://files.catbox.moe/n7c7t7.jpg", shame: 250, description: "Румумумцмц." },
+        { name: "Тріщ Богдан Михайлович", photo: "https://files.catbox.moe/pwvudg.jpg", shame: 1007, description: "в мене 3 око." }
       ];
 
       /* =========================
@@ -538,4 +546,5 @@
   </script>
 </body>
 </html>
+
 
