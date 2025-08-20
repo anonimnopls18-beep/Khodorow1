@@ -1,10 +1,167 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>закрито</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ходорів Рандонаут</title>
+  <style>
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #0b0b0b;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+      animation: fadeInDown 1s ease-out;
+    }
+    button {
+      padding: 14px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #111, #333);
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.07);
+      background: linear-gradient(135deg, #222, #444);
+    }
+    #result {
+      margin-top: 25px;
+      font-size: 18px;
+      animation: fadeIn 0.6s ease;
+      max-width: 90%;
+    }
+    .place-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    .place-desc {
+      font-size: 0.95rem;
+      color: #b0b0b0;
+      margin-top: 6px;
+      margin-bottom: 8px;
+    }
+    a {
+      color: #6ee7b7;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Анімації */
+    @keyframes fadeIn {
+      from {opacity:0; transform: translateY(10px)}
+      to {opacity:1; transform: translateY(0)}
+    }
+    @keyframes fadeInDown {
+      from {opacity:0; transform: translateY(-20px)}
+      to {opacity:1; transform: translateY(0)}
+    }
+    @keyframes floating {
+      0% {transform: translateY(0px)}
+      50% {transform: translateY(-10px)}
+      100% {transform: translateY(0px)}
+    }
+
+    /* Прикольні плюшки */
+    .emoji-bg {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.05;
+      user-select: none;
+      animation: floating 6s ease-in-out infinite;
+    }
+
+    /* Івент у верхньому лівому кутку */
+    .event-box {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(20,20,20,0.9);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      text-align: left;
+      max-width: 240px;
+      line-height: 1.4;
+    }
+    .event-box a {
+      color: #6ee7b7;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px){
+      h1 {font-size: 1.5rem;}
+      button {font-size: 14px; padding: 12px 18px;}
+      .place-name {font-size: 1.1rem;}
+      .place-desc {font-size: 0.9rem;}
+      .event-box {font-size: 0.8rem; max-width: 200px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Івент -->
+  <div class="event-box">
+    📸 Івент:<br>
+    Сфоткайся на фоні будь-якого об’єкта з сайту<br>
+    і кинь фото в канал 👉 <a href="https://t.me/KHODOR1V" target="_blank">@KHODOR1V</a>
+  </div>
+
+  <h1>Ходорів Рандонаут</h1>
+  <h5>Немає що робити на гулянках? стало скучно? цей сервіс ваше спасіння! тут купа місць куди можна піти в межах Ходорова</h5>
+  <button id="btn">🎲 Отримати випадкову локацію</button>
+  <div id="result"></div>
+
+  <!-- прикольні відсилки -->
+  <div class="emoji-bg" style="top:10%; left:5%;">🧭</div>
+  <div class="emoji-bg" style="top:20%; right:8%; animation-delay:1s">✨</div>
+  <div class="emoji-bg" style="bottom:15%; left:10%; animation-delay:2s">🎲</div>
+  <div class="emoji-bg" style="bottom:8%; right:15%; animation-delay:3s">🌌</div>
+
+  <script>
+    // Список локацій з описами
+    const locations = [
+      {name: "Багато поверхівки", desc: "Їх кілька,там і правда цікаво.", lat:49.412816, lng:24.298401},
+      {name: "Вишка", desc: "Вишка на стадіоні на якій знаходиться табло з рахунком.", lat:49.404042, lng:24.320663},
+      {name: "Поліклініка", desc: "зафоршене місце, там знімався фільм Тінь вулиць.", lat:49.403374, lng:24.311776},
+      {name: "Полік", desc: "Поліграфмаш, величезна заброшка, там вроді охорона.", lat:49.406029, lng:24.307593},
+      {name: "Мусорка", desc: "Там купа бомжів і циганів плюсом неймовірний сморід.", lat:49.400520, lng:24.295042},
+      {name: "Бурякопункт", desc: "там пару будівль, він не відноситься до Цукровика, там є де полазити.", lat:49.401395, lng:24.299107},
+      {name: "Цукровик", desc: "Цукровянський Завод, зараз там якісь роботи, це величезна тереторія по якій можна полазити.", lat:49.23525, lng:24.18090},
+      {name: "Універмаг", desc: "Популярна закинута будівля, можете в підвал залісти там теж прикольно.", lat:49.406112, lng:24.314827},
+      {name: "Старий Магаз", desc: "Хз, якийсь магазин, чи що, знаходиться на Цукровні біля Цукровика.", lat:49.397419, lng:24.303065},
+      {name: "Дім вуйка месі", desc: "Він там живе від 19.00 до 09.00 дальше там вільно.", lat:49.407532, lng:24.302166},
+      {name: "Дунапак?", desc: "Велика башня, залізти просто.", lat:49.24058, lng:24.18229}
+    ];
+
+    function randomLocation(){
+      const loc = locations[Math.floor(Math.random()*locations.length)];
+      const url = `https://www.google.com/maps?q=${loc.lat},${loc.lng}`;
+      document.getElementById('result').innerHTML = `
+        <div class="place-name">${loc.name}</div>
+        <div class="place-desc">${loc.desc}</div>
+        <a href="${url}" target="_blank">Відкрити в Google Maps</a>
+      `;
+    }
+
+    document.getElementById('btn').addEventListener('click', randomLocation);
+  </script>
 </body>
-</html> 
-
-
+</html>
